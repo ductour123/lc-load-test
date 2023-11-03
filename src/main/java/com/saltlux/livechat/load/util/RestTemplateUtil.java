@@ -1,6 +1,6 @@
 package com.saltlux.livechat.load.util;
 
-import com.saltlux.livechat.load.config.TalkbotEndpoint;
+import com.saltlux.livechat.load.config.LivechatEndpoint;
 import com.saltlux.livechat.load.vo.ResultShare;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 public class RestTemplateUtil {
 
 	private RestTemplate restTemplate;
-	private TalkbotEndpoint talkbotEndpoint;
+	private LivechatEndpoint livechatEndpoint;
 
 	
 //	@Value(value = "${talkbot.url}")
@@ -52,7 +52,7 @@ public class RestTemplateUtil {
 		getHeader.setAccept(tempHeader);
 		HttpEntity<String> getEntity = new HttpEntity<String>(getHeader);
 
-		String url = talkbotEndpoint.getStartConversationUrl();
+		String url = livechatEndpoint.getStartConversationUrl();
 		ResponseEntity<JSONObject> result = restTemplate.exchange(url, HttpMethod.GET, getEntity, JSONObject.class);
 
 		JSONParser parser = new JSONParser();
@@ -77,7 +77,7 @@ public class RestTemplateUtil {
 		CallResult callResult = new CallResult(CallStatus.Success, 0, null);
 		StopWatch sw = StopWatch.createStarted();
 		try {
-			String url = talkbotEndpoint.getSendMessageUrl(conversationId);
+			String url = livechatEndpoint.getSendMessageUrl(conversationId);
 			restTemplate.postForEntity(url, message.getBytes(StandardCharsets.UTF_8), String.class);
 		} catch (Exception ex) {
 			callResult.setStatus(CallStatus.Error);
@@ -95,7 +95,7 @@ public class RestTemplateUtil {
 		HttpEntity<String> getEntity = new HttpEntity<String>(getHeader);
 
 		try{
-			String url = talkbotEndpoint.getStopConversationUrl(conversationId);
+			String url = livechatEndpoint.getStopConversationUrl(conversationId);
 			ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, getEntity, String.class);
 
 			if(result.getStatusCode() != HttpStatus.OK) {

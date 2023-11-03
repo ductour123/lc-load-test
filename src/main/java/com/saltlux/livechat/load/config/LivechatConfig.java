@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Getter
 @Configuration
-public class TalkbotConfig {
+public class LivechatConfig {
     @Value("${talkbot.chatApi}")
     private String chatApi;
 
@@ -15,4 +15,7 @@ public class TalkbotConfig {
 
     @Value("${talkbot.serverId}")
     private int serverId;
+
+    @Value("${lc.url.connectWs}")
+    private String urlConnectWs;
 }

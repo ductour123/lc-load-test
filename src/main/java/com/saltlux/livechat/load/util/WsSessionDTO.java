@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SessionWsDTO {
+public class WsSessionDTO {
     private String sessionId;
     private String browser;
     private String city;

@@ -22,10 +22,13 @@ public class TestConfig {
     @Value("${tc.dataFile}")
     private String dataFile;
 
+    @Value("${lc.livechatId}")
+    private String livechatId;
+
     @Value("${lc.conf.info.orgCode}")
-    private String lcConfInfoOrgCode;
+    private String confInfoOrgCode;
 
     @Value("${lc.conf.info.livechatCode}")
-    private String lcConfInfoLivechatCode;
+    private String confInfoLivechatCode;
 
 }

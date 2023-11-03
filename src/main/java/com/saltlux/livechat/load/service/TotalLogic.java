@@ -1,6 +1,6 @@
 package com.saltlux.livechat.load.service;
 
-import com.saltlux.livechat.load.config.TalkbotConfig;
+import com.saltlux.livechat.load.config.LivechatConfig;
 import com.saltlux.livechat.load.config.TestConfig;
 import com.saltlux.livechat.load.thread.CheckThreadAliveCount;
 import com.saltlux.livechat.load.thread.WhileSingleThread;
@@ -33,12 +33,12 @@ public class TotalLogic {
 
 	private final RestTemplateUtil rest;
 	private final TestConfig testConfig;
-	private final TalkbotConfig talkbotConfig;
+	private final LivechatConfig livechatConfig;
 
-	private TotalLogic(RestTemplateUtil rest, TestConfig testConfig, TalkbotConfig talkbotConfig) {
+	private TotalLogic(RestTemplateUtil rest, TestConfig testConfig, LivechatConfig livechatConfig) {
 		this.rest = rest;
 		this.testConfig = testConfig;
-		this.talkbotConfig = talkbotConfig;
+		this.livechatConfig = livechatConfig;
 	}
 	
 	private ExecutorService singleExecutor = null;
@@ -55,8 +55,8 @@ public class TotalLogic {
 		System.out.println("------------");
 		System.out.printf("CCU: %s\n", testConfig.getMaxCCU());
 		System.out.printf("Duration: %s m\n", testConfig.getDuration());
-		System.out.printf("Server: %s\n", talkbotConfig.getChatApi());
-		System.out.printf("Bot: %s\n", talkbotConfig.getBotId());
+		System.out.printf("Server: %s\n", livechatConfig.getChatApi());
+		System.out.printf("Bot: %s\n", livechatConfig.getBotId());
 		System.out.printf("Dataset: %s\n", testConfig.getDataFile());
 
 		StopWatch sw = StopWatch.createStarted();
