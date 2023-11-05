@@ -50,6 +50,7 @@ public class WsPressCallable implements Callable<List<ResponseInfo>> {
                     wsRest.sendMessage(message, conversationId);
                     // Tăng số lần request
                     resultShare.addRq(1);
+                    resultShare.addBeforeReqAgentRqCnt(1);
                     conversationMsgTotal++;
                 }
 

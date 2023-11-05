@@ -17,6 +17,7 @@ public class WsResultShare {
     private final int ccu;
     private final AtomicInteger rpCnt;
     private final AtomicInteger rqCnt;
+    private final AtomicInteger beforeReqAgentRqCnt;
     private final AtomicInteger errCnt;
 
     @Getter
@@ -37,6 +38,7 @@ public class WsResultShare {
         this.startTime = new Date();
         this.rpCnt = new AtomicInteger(0);
         this.rqCnt = new AtomicInteger(0);
+        this.beforeReqAgentRqCnt = new AtomicInteger(0);
         this.errCnt = new AtomicInteger(0);
         this.ccu = ccu;
         this.sw = sw;
@@ -48,6 +50,7 @@ public class WsResultShare {
     public int addRq(int number){
         return rqCnt.addAndGet(number);
     }
+    public int addBeforeReqAgentRqCnt(int number) { return beforeReqAgentRqCnt.addAndGet(number); }
     public int addErr(int number){
         return errCnt.addAndGet(number);
     }
@@ -57,6 +60,7 @@ public class WsResultShare {
         System.out.printf("Run time: %s\n", SystemUtil.toHumanReadableTimeFormat(this.sw.getTime()));
         this.openedConversation.print();
         System.out.printf("Total request : %s\n", rqCnt);
+        System.out.printf("Total responses : %s\n", rpCnt);
 //        System.out.printf("\tSuccess: %s (%s%%)\n", rpCnt, SystemUtil.calculatePercentage(rpCnt.get(), rqCnt.get()));
 //        System.out.printf("\tFailed: %s (%s%%)\n", errCnt, SystemUtil.calculatePercentage(errCnt.get(), rqCnt.get()));
 
@@ -93,7 +97,9 @@ public class WsResultShare {
         System.out.printf(" - Max: %s\n", SystemUtil.toHumanReadableTimeFormat(Collections.max(converationTimeLst)));
         System.out.printf(" - Avg: %s\n", SystemUtil.toHumanReadableTimeFormat((long)converationTimeLst.stream().mapToLong(l -> l).average().orElse(0.0)));
         System.out.println("Messages Send:");
-        System.out.println((" - Total: " + rqCnt));
+        System.out.println((" - Total messages: " + rqCnt));
+        System.out.println((" - Total messages before Request Agent: " + beforeReqAgentRqCnt));
+        System.out.println(" - Total responses : " + rpCnt);
         System.out.printf(" - Min: %s\n", Collections.min(conversationMsgTotalLst));
         System.out.printf(" - Max: %s\n", Collections.max(conversationMsgTotalLst));
         System.out.printf(" - Avg: %s\n", (int)conversationMsgTotalLst.stream().mapToInt(i -> i).average().orElse(0.0));

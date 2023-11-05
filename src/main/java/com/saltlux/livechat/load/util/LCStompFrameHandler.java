@@ -26,12 +26,13 @@ public class LCStompFrameHandler implements StompFrameHandler {
     @Override
     public void handleFrame(final StompHeaders stompHeaders, final Object obj) {
 //        Map payload = (Map) obj;
-//
 //        if (Objects.nonNull(payload.get("idle"))) {
 //            this.resultShare.increaseOpenConversation(true);
 //        }
-
 //        logger.info("Received: " + payload.toString());
+
+        // Tăng số lần nhan msg
+        resultShare.addRp(1);
 
     }
 
