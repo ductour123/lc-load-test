@@ -1,13 +1,14 @@
 package com.saltlux.livechat.load.service;
 
 import com.saltlux.livechat.load.config.LivechatConfig;
+import com.saltlux.livechat.load.config.LivechatEndpoint;
 import com.saltlux.livechat.load.config.TestConfig;
-import com.saltlux.livechat.load.thread.CheckThreadAliveCount;
-import com.saltlux.livechat.load.thread.WhileSingleThread;
-import com.saltlux.livechat.load.util.RestTemplateUtil;
+import com.saltlux.livechat.load.thread.WsCheckThreadAliveCount;
+import com.saltlux.livechat.load.thread.WsWhileSingleThread;
 import com.saltlux.livechat.load.util.SystemUtil;
+import com.saltlux.livechat.load.util.WsSessionUtil;
 import com.saltlux.livechat.load.vo.ResponseInfo;
-import com.saltlux.livechat.load.vo.ResultShare;
+import com.saltlux.livechat.load.vo.WsResultShare;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -22,21 +23,20 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Slf4j
 @Service
-public class WSTotalLogic {
+public class WsTotalLogic {
 
-    private final RestTemplateUtil rest;
+    private final WsSessionUtil wsRest;
     private final TestConfig testConfig;
     private final LivechatConfig livechatConfig;
 
-    private WSTotalLogic(RestTemplateUtil rest, TestConfig testConfig, LivechatConfig livechatConfig) {
-        this.rest = rest;
+    private WsTotalLogic(WsSessionUtil wsRest, TestConfig testConfig, LivechatConfig livechatConfig, LivechatEndpoint livechatEndpoint){
+        this.wsRest = wsRest;
+        this.wsRest.livechatEndpoint = livechatEndpoint;
+        this.wsRest.testConfig = testConfig;
         this.testConfig = testConfig;
         this.livechatConfig = livechatConfig;
     }
@@ -46,8 +46,8 @@ public class WSTotalLogic {
     private ExecutorService checkThreadAliveCount = null;
     private ExecutorService executor = null;
 
-    private WhileSingleThread wst = null;
-    private CheckThreadAliveCount chk = null;
+    private WsWhileSingleThread wst = null;
+    private WsCheckThreadAliveCount chk = null;
 
 
     public void startPress() {
@@ -55,12 +55,12 @@ public class WSTotalLogic {
         System.out.println("------------");
         System.out.printf("CCU: %s\n", testConfig.getMaxCCU());
         System.out.printf("Duration: %s m\n", testConfig.getDuration());
-        System.out.printf("Server: %s\n", livechatConfig.getChatApi());
-        System.out.printf("Bot: %s\n", livechatConfig.getBotId());
+        System.out.printf("Server: %s\n", livechatConfig.getUrlConnectWs());
+        System.out.printf("livechatId: %s\n", testConfig.getLivechatId());
         System.out.printf("Dataset: %s\n", testConfig.getDataFile());
 
         StopWatch sw = StopWatch.createStarted();
-        ResultShare resultShare = new ResultShare(testConfig.getMaxCCU(), sw);
+        WsResultShare resultShare = new WsResultShare(testConfig.getMaxCCU(), sw);
 
         List<List<String>> dataSet = this.readDataSetRandom(2000, 20);
         List<Future<List<ResponseInfo>>> futureList = new ArrayList<Future<List<ResponseInfo>>>();
@@ -70,10 +70,16 @@ public class WSTotalLogic {
         this.checkThreadAliveCount = Executors.newSingleThreadExecutor();
         this.executor = Executors.newScheduledThreadPool(testConfig.getMaxCCU());
 
-        wst = new WhileSingleThread(executor, futureList, rest, dataSet, testConfig.getMaxCCU(), resultShare);
+        try {
+            this.wsRest.createWsSession();
+        } catch (Exception e) {
+            System.out.print("--- exception when create Websocket session: " + e.getMessage());
+        }
+
+        wst = new WsWhileSingleThread(executor, futureList, wsRest, dataSet, testConfig.getMaxCCU(), resultShare);
         singleExecutor.submit(wst);
 
-        chk = new CheckThreadAliveCount(this.executor,resultShare);
+        chk = new WsCheckThreadAliveCount(this.executor, resultShare);
         checkThreadAliveCount.submit(chk);
 
         this.StopAllThread(testConfig.getDuration());
@@ -164,7 +170,7 @@ public class WSTotalLogic {
 
             for(int i=0; i<nConversation; i++) {
                 List<String> sentences = new ArrayList<>();
-                int numTurn = SystemUtil.getRandomNumber(5, maxTurn);
+                int numTurn = SystemUtil.getRandomNumber(10, maxTurn);
                 for(int j=0;j<numTurn;j++) {
                     int rdSentIdx = SystemUtil.getRandomNumber(0, totalSentence);
                     sentences.add(sentenceLst.get(rdSentIdx));
