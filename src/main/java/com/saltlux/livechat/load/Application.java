@@ -66,8 +66,14 @@ public class Application {
 //        session.subscribe("/conversation/" + livechatSessionId, new LCStompFrameHandler(null));
 //        logger.info("Subscribed to /conversation/" + livechatSessionId);
 //
-//        ClientInfo clientInfo = new ClientInfo();
-//        clientInfo.setLivechatId("9eef26c1-51ea-4ecb-abec-632bf49138fa");
+        ClientInfo clientInfo = new ClientInfo();
+        clientInfo.setLivechatId("9eef26c1-51ea-4ecb-abec-632bf49138fa");
+
+//        clientInfo.setCity("Quảng Bình");
+//        clientInfo.setBrowser("Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; Win64; x64; Trident/6.0; .NET4.0E; .NET4.0C; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 2.0.50727)");
+//        clientInfo.setDevice("Samsung Galaxy Notes series");
+//        clientInfo.setOs("Windows NT 8+");
+
 //        session.send("/livechat/startConversation/" + livechatSessionId, clientInfo);
 //
 //        WsSessionDTO wsSessionDTO = new WsSessionDTO();

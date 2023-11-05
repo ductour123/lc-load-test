@@ -28,9 +28,12 @@ import java.util.concurrent.ExecutionException;
 @NoArgsConstructor
 public class WsSessionUtil {
     public StompSession wsSession;
-//    private RestTemplate restTemplate;
     public LivechatEndpoint livechatEndpoint;
     public TestConfig testConfig;
+    public List<String> userAgentsData;
+    public List<String> citiesData;
+    public List<String> devicesData;
+    public List<String> osData;
 
 //    public WsSessionUtil() throws ExecutionException, InterruptedException {
 //        createWsSession();
@@ -57,8 +60,11 @@ public class WsSessionUtil {
 
         ClientInfo clientInfo = new ClientInfo();
         clientInfo.setLivechatId(testConfig.getLivechatId());
-
         // set random value of infos
+        clientInfo.setCity(this.getRandomCity());
+        clientInfo.setBrowser(this.getRandomUserAgent());
+        clientInfo.setDevice(this.getRandomDevice());
+        clientInfo.setOs(this.getRandomOs());
 
         wsSession.send("/livechat/startConversation/" + livechatSessionId, clientInfo);
 
@@ -86,6 +92,26 @@ public class WsSessionUtil {
         wsSessionDTO.setSessionId(conversationId);
         wsSession.send("/livechat/stopConversation/" + conversationId, wsSessionDTO);
 
+    }
+
+    private String getRandomUserAgent() {
+        int rdSentIdx = SystemUtil.getRandomNumber(0, this.userAgentsData.size() - 1);
+        return this.userAgentsData.get(rdSentIdx);
+    }
+
+    private String getRandomOs() {
+        int rdSentIdx = SystemUtil.getRandomNumber(0, this.osData.size() - 1);
+        return this.osData.get(rdSentIdx);
+    }
+
+    private String getRandomDevice() {
+        int rdSentIdx = SystemUtil.getRandomNumber(0, this.devicesData.size() - 1);
+        return this.devicesData.get(rdSentIdx);
+    }
+
+    private String getRandomCity() {
+        int rdSentIdx = SystemUtil.getRandomNumber(0, this.citiesData.size() - 1);
+        return this.citiesData.get(rdSentIdx);
     }
 
     @Data

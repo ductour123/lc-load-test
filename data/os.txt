@@ -1,0 +1,7 @@
+iOS
+Android
+windows
+ubuntu
+Centos
+Feroda
+Windows NT 8+

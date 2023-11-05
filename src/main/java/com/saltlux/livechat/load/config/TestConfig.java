@@ -22,6 +22,18 @@ public class TestConfig {
     @Value("${tc.dataFile}")
     private String dataFile;
 
+    @Value("${tc.dataFile.userAgents}")
+    private String userAgentsDataFile;
+
+    @Value("${tc.dataFile.os}")
+    private String osDataFile;
+
+    @Value("${tc.dataFile.devices}")
+    private String divicesDataFile;
+
+    @Value("${tc.dataFile.cities}")
+    private String citiesDataFile;
+
     @Value("${lc.livechatId}")
     private String livechatId;
 

@@ -72,6 +72,7 @@ public class WsTotalLogic {
 
         try {
             this.wsRest.createWsSession();
+            this.readSessionData();
         } catch (Exception e) {
             System.out.print("--- exception when create Websocket session: " + e.getMessage());
         }
@@ -183,6 +184,34 @@ public class WsTotalLogic {
         }
 
         return result;
+    }
+
+    private void readSessionData() {
+
+        try {
+            // read user-agents
+            File file = new File(testConfig.getUserAgentsDataFile());
+            this.wsRest.userAgentsData = FileUtils.readLines(file, StandardCharsets.UTF_8);
+
+            // read os
+            File file1 = new File(testConfig.getOsDataFile());
+            this.wsRest.osData = FileUtils.readLines(file1, StandardCharsets.UTF_8);
+
+            // read divices
+            File file2 = new File(testConfig.getDivicesDataFile());
+            this.wsRest.devicesData =  FileUtils.readLines(file2, StandardCharsets.UTF_8);
+
+            // read cities
+            File file3 = new File(testConfig.getCitiesDataFile());
+            this.wsRest.citiesData =  FileUtils.readLines(file3, StandardCharsets.UTF_8);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
     }
 
     public static void main(String []args) {
