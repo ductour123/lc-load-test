@@ -85,6 +85,10 @@ public class WsTotalLogic {
 
         this.StopAllThread(testConfig.getDuration());
 
+        // close websocket
+        log.info("===========> close Ws Session");
+        this.wsRest.closeWsSession();
+
         sw.stop();
         resultShare.printReport();
     }
@@ -98,10 +102,31 @@ public class WsTotalLogic {
             this.wst.stop();
             this.chk.stop();
 
-            this.singleExecutor.shutdownNow();
-            this.singleExecutorForIncrease.shutdownNow();
-            this.checkThreadAliveCount.shutdownNow();
-            this.executor.shutdownNow();
+            this.singleExecutor.shutdown();
+            this.singleExecutorForIncrease.shutdown();
+            this.checkThreadAliveCount.shutdown();
+            this.executor.shutdown();
+//            try {
+//                if (!this.singleExecutor.awaitTermination(5, TimeUnit.MINUTES)) {
+//                    this.singleExecutor.shutdownNow();
+//                }
+//                if (!this.singleExecutorForIncrease.awaitTermination(10, TimeUnit.SECONDS)) {
+//                    this.singleExecutorForIncrease.shutdownNow();
+//                }
+//                if (!this.checkThreadAliveCount.awaitTermination(10, TimeUnit.SECONDS)) {
+//                    this.checkThreadAliveCount.shutdownNow();
+//                }
+//                if (!this.executor.awaitTermination(5, TimeUnit.MINUTES)) {
+//                    this.executor.shutdownNow();
+//                }
+//
+//            } catch (InterruptedException ex) {
+//                singleExecutor.shutdownNow();
+//                singleExecutorForIncrease.shutdownNow();
+//                checkThreadAliveCount.shutdownNow();
+//                executor.shutdownNow();
+//                Thread.currentThread().interrupt();
+//            }
 
 
             while (!this.singleExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
@@ -120,9 +145,10 @@ public class WsTotalLogic {
                 SystemUtil.sleep(TimeUnit.MILLISECONDS, 100);
             }
 
-            System.out.println("============> All task completed");
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            System.out.println("============> All task completed");
         }
     }
 
@@ -174,7 +200,7 @@ public class WsTotalLogic {
                 int numTurn = SystemUtil.getRandomNumber(10, maxTurn);
                 for(int j=0;j<numTurn;j++) {
                     int rdSentIdx = SystemUtil.getRandomNumber(0, totalSentence);
-                    sentences.add(sentenceLst.get(rdSentIdx));
+                    sentences.add(sentenceLst.get(rdSentIdx).trim());
                 }
                 result.add(sentences);
             }

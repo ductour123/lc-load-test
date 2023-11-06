@@ -10,6 +10,7 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -44,14 +45,16 @@ public class WsPressCallable implements Callable<List<ResponseInfo>> {
             if(!StringUtils.isEmpty(conversationId)) {
                 // send msg time 1
                 for (String message : turnList_1) {
-                    // Thời gian delay giữa 2 lần gửi message trong 1 conversation
-                    SystemUtil.sleep(TimeUnit.MILLISECONDS, getRandomNumber(3000, 5000));
+                    if (!message.isEmpty()) {
+                        // Thời gian delay giữa 2 lần gửi message trong 1 conversation
+                        SystemUtil.sleep(TimeUnit.MILLISECONDS, getRandomNumber(3000, 5000));
 
-                    wsRest.sendMessage(message, conversationId);
-                    // Tăng số lần request
-                    resultShare.addRq(1);
-                    resultShare.addBeforeReqAgentRqCnt(1);
-                    conversationMsgTotal++;
+                        wsRest.sendMessage(message, conversationId);
+                        // Tăng số lần request
+                        resultShare.addRq(1);
+                        resultShare.addBeforeReqAgentRqCnt(1);
+                        conversationMsgTotal++;
+                    }
                 }
 
                 // request agent
@@ -59,13 +62,15 @@ public class WsPressCallable implements Callable<List<ResponseInfo>> {
 
                 // send msg time 2
                 for (String message : turnList_2) {
-                    // Thời gian delay giữa 2 lần gửi message trong 1 conversation
-                    SystemUtil.sleep(TimeUnit.MILLISECONDS, getRandomNumber(3000, 5000));
+                    if (!message.isEmpty()) {
+                        // Thời gian delay giữa 2 lần gửi message trong 1 conversation
+                        SystemUtil.sleep(TimeUnit.MILLISECONDS, getRandomNumber(3000, 5000));
 
-                    wsRest.sendMessage(message, conversationId);
-                    // Tăng số lần request
-                    resultShare.addRq(1);
-                    conversationMsgTotal++;
+                        wsRest.sendMessage(message, conversationId);
+                        // Tăng số lần request
+                        resultShare.addRq(1);
+                        conversationMsgTotal++;
+                    }
                 }
 
             }
@@ -76,8 +81,13 @@ public class WsPressCallable implements Callable<List<ResponseInfo>> {
         // close conversation
         try {
             if(null != conversationId) {
-                SystemUtil.sleep(TimeUnit.MILLISECONDS, getRandomNumber(3000, 5000));
+//                SystemUtil.sleep(TimeUnit.MILLISECONDS, getRandomNumber(3000, 5000));
+
+                SystemUtil.sleep(TimeUnit.SECONDS, 30);
+
                 wsRest.closeConversatioId(conversationId, resultShare);
+            } else {
+                log.info("Can't see conversationId");
             }
         } catch (Exception e) {
             log.error("Failed to close conversation: {}", e.getLocalizedMessage());
@@ -87,6 +97,7 @@ public class WsPressCallable implements Callable<List<ResponseInfo>> {
         resultShare.conversationMsgTotalLst.add(conversationMsgTotal);
         resultShare.converationTimeLst.add(sw.getTime());
 
+        sw.stop();
         return result;
     }
 

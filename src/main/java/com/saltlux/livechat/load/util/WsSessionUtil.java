@@ -51,6 +51,12 @@ public class WsSessionUtil {
         this.wsSession = stompClient.connect(livechatEndpoint.getUrlConnectWs(), new StompSessionHandlerUtil()).get();
     }
 
+    public void closeWsSession() {
+        if (this.wsSession != null && this.wsSession.isConnected()) {
+            this.wsSession.disconnect();
+        }
+    }
+
     public String startConversation(WsResultShare resultShare) {
         // Create uuid to as livechatSessionId, after listen
         String livechatSessionId = UUID.randomUUID().toString();
@@ -85,12 +91,12 @@ public class WsSessionUtil {
     }
 
     public void closeConversatioId(String conversationId, WsResultShare resultshare) {
-
-        log.debug("Close Conversation ID : {}", conversationId);
         // stop Conversation
         WsSessionDTO wsSessionDTO = new WsSessionDTO();
         wsSessionDTO.setSessionId(conversationId);
         wsSession.send("/livechat/stopConversation/" + conversationId, wsSessionDTO);
+
+        log.info("Close Conversation ID : {}", conversationId);
 
     }
 

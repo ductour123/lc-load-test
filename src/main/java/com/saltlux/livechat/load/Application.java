@@ -2,10 +2,7 @@ package com.saltlux.livechat.load;
 
 import com.saltlux.livechat.load.service.TotalLogic;
 import com.saltlux.livechat.load.service.WsTotalLogic;
-import com.saltlux.livechat.load.util.ClientInfo;
-import com.saltlux.livechat.load.util.LCStompFrameHandler;
-import com.saltlux.livechat.load.util.StompSessionHandlerUtil;
-import com.saltlux.livechat.load.util.WsSessionDTO;
+import com.saltlux.livechat.load.util.*;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,7 +58,7 @@ public class Application {
 //
 //        Logger logger = LogManager.getLogger(Application.class);
 //        // subcribe to topic socket server
-//        session.subscribe("/conversation/" + livechatSessionId, new LCStompFrameHandler(null));
+//        session.subscribe("/conversation/" + livechatSessionId, new TestStompFrameHandler());
 //        logger.info("Subscribed to /conversation/" + livechatSessionId);
 //
 //        ClientInfo clientInfo = new ClientInfo();
@@ -77,11 +74,11 @@ public class Application {
 //        WsSessionDTO wsSessionDTO = new WsSessionDTO();
 //        wsSessionDTO.setMessage("승차권 예약 및 환불 안내");
 //        session.send("/livechat/sendMessage/" + livechatSessionId, wsSessionDTO);
-//
+
 //        wsSessionDTO.setMessage("예약 편의서비스");
 //        session.send("/livechat/sendMessage/" + livechatSessionId, wsSessionDTO);
-
-        //request agent
+//
+//        //request agent
 //        session.send("/livechat/requestAgent/" + livechatSessionId, null);
 //
 //        wsSessionDTO.setMessage("Indian startups today are MNCs of tomorrow, says PM");
@@ -89,13 +86,15 @@ public class Application {
 //
 //        wsSessionDTO.setMessage("Amazon launches essentials and grocery delivery in Kolkata");
 //        session.send("/livechat/sendMessage/" + livechatSessionId, wsSessionDTO);
-//
-//        // stop Conversation
+
+        // stop Conversation
 //        wsSessionDTO.setSessionId(livechatSessionId);
 //        session.send("/livechat/stopConversation/" + livechatSessionId, wsSessionDTO);
-
-
+//
+//
 //        new Scanner(System.in).nextLine();
+//
+//        session.disconnect();
 
     }
 }
